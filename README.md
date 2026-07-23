@@ -9,7 +9,7 @@ This project will ingest, transform, and add business logic to satellite data fr
 ## 🏗️ Data Architecture
 
 The data architecture for this project follows Medallion Architecture **Bronze**, **Silver**, and **Gold** layers:
-![Data Architecture](docs/HighLevelArchitecture_draft.png)
+![Data Architecture](docs/HighLevelArchitecture_v0.png)
 
 1. **Bronze Layer**: Stores raw data as-is from the source system. Data is ingested from GeoTIFF files into Databricks Delta Tables.
 2. **Silver Layer**: This layer includes data cleansing, standardization, flagging, and indexing to prepare data for analysis.
