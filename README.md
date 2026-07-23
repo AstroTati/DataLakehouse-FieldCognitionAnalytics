@@ -1,8 +1,8 @@
-# Data Lakehouse for Field Condition Analytics
+# Data Lakehouse for Field Cognition Analytics
 > [!WARNING]  
 > **This repository is under construction.**
 
-Welcome to the **Data Lakehouse for Field Condition Analytics** repository! 🛰️
+Welcome to the **Data Lakehouse for Field Cognition Analytics** repository! 🛰️
 
 This project will ingest, transform, and add business logic to satellite data from the [Copernicus](https://www.copernicus.eu/en) Sentinel-2 satellite. 
 
