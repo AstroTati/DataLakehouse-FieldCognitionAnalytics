@@ -1,3 +1,8 @@
+### Sep 7, 2026
+Pude hacer andar las verificaciones y tests, la tabla de control anda bien tambien. \
+Problema: cada que corro el script descarga los datos de nuevo. No filtra bien por status = 'success' o hay alguna otra diferencia (timestamp, etc) que domina y me estoy perdiendo?
+
+
 ### Sep 4, 2026
 * Verificaciones, tests, limpiezas:
   * checksum + size verification: para que asegurar que se descargan todos los datos por escena.
