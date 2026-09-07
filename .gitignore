@@ -24,8 +24,9 @@ venv/
 *.tiff
 *.jp2
 *.parquet
-data/
-outputs/
+## Descomentar si no quiero que se guarde info de testing y tal.
+# data/
+# outputs/
 
 # --- Delta Lake / Spark local ---
 _delta_log/
