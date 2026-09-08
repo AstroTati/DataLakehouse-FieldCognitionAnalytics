@@ -48,4 +48,4 @@ ___
   SCL_20m, SCL_60m
 * Explorando los datos a traves de la web de Copernicus, se ve que aunque haya datos cada un par de dias, solo 1 o 2 veces al mes se observa el mismo area:
 
-<img src='docs/example-June22.png' width='500'><img src='docs/example-June24.png' width='500'><img src='docs/example-June25.png' width='500'>
+<img src='docs/example_june22.png' width='500'><img src='docs/example_june24.png' width='500'><img src='docs/example_june25.png' width='500'>
