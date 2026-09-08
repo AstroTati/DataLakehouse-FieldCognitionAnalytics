@@ -2,21 +2,19 @@
 ## Planning capa Silver
 ### Transformaciones
 
-1. **Nivel de procesamiento**: si el modelo necesita reflectancia de superficie, tenemos que agregar la capa L1C (estoy bajando L2A), y hacer la correccion atmosferica (Sen2Cor u otra; esto tengo que buscar bien cual conviene y como hacerlo).
+1. **Reproyeccion**: si el area de estudio cae en el limite entre dos zonas UTM, vamos a tener tiles vecinos con sistemas de coordenadas de referencia (CRS) distintos (EPSG:32720 vs EPSG:32721, por ejemplo). Por las dudas, reproyectamos todo a un CRS comun antes de tilear.
 
-2. **Reproyeccion** a common reporting standard (CRS).
+2. **Mascara de nubes/sombras/nieve**: las bandas indican el % de toda la escena, esto no nos ayuda si por ejemplo una escena con 15% de nubosidad tiene un tile 100% tapado. Usar la capa SCL para flaggear.
 
-3. **Mascara de nubes/sombras/nieve**: las bandas indican el % de toda la escena, esto no nos ayuda si por ejemplo una escena con 15% de nubosidad tiene un tile 100% tapado. Usar la capa SCL para flaggear.
+3. **Manejo de no-data/bordes**: los bordes de la escena satelital y las zonas de overlap entre pasadas del satelite tienen pixeles no-data. Que % de tiles no-data usamos de tolerancia? (i.e., descartar el tile si >X% de pixeles es no-data).
 
-4. **Manejo de no-data/bordes**: los bordes de la escena satelital y las zonas de overlap entre pasadas del satelite tienen pixeles no-data. Que % de tiles no-data usamos de tolerancia? (i.e., descartar el tile si >X% de pixeles es no-data).
+4. **Seleccion y resampling de bandas**: Sentinel-2 tiene bandas de tres resoluciones (10m, 20m, 60m). De las bandas que me paso Feli que necesitan, tienen todas opcion de resolucion de 20m excepto la B08, que tiene solo 10m. Si el UNet necesita una resolucion uniforme, resampleamos las de 10/20m a 60m para usar todos los datos (caveat, las iamgenes son tomadas simultaneamente), tomamos solo las de 20m (resampleampleando la B08), tomamos solo las de 60m, o tomamos TODO? Que metodo de resampling usamos (nearest/bilinear/cubic)?
 
-5. **Seleccion y resampling de bandas**: Sentinel-2 tiene bandas de tres resoluciones (10m, 20m, 60m). De las bandas que me paso Feli que necesitan, tienen todas opcion de resolucion de 20m excepto la B08, que tiene solo 10m. Si el UNet necesita una resolucion uniforme, resampleamos las de 10/20m a 60m para usar todos los datos (caveat, las iamgenes son tomadas simultaneamente), tomamos solo las de 20m (resampleampleando la B08), tomamos solo las de 60m, o tomamos TODO? Que metodo de resampling usamos (nearest/bilinear/cubic)?
+5. **Normalizacion**: chequear que se esta aplicando el offset correcto para evitar corrimiento sistematico en los valores. --> Copernicus cambio el esquema de offset en procesamiento en 2022, baseline 04.00+. Esto cambia bastante seguido parece asi que no deberiamos harcodearlo.
 
-6. **Normalizacion**: chequear que se esta aplicando el offset correcto para evitar corrimiento sistematico en los valores. --> Copernicus cambio el esquema de offset en procesamiento en 2022, baseline 04.00+. Esto lo vi en un video de YouTube pero no se bien como saberlo todavia, tengo que buscar donde aparece.
+6. **Tipo de dato y precision**: si no tenemos problemas de storage, guardamos la reflectancia ya calculada ((DN + offset) / 10000 en un float32). Si esto se convierte en un problema, tendremos que guardar el DN (unit16) y hacer la transformacion medio OTF.
 
-7. **Tipo de dato y precision**: float32? float64?.
-
-8. **Deduplicacion**: si el area de interes cae en el overlap entre dos swaths consecutivos del satelite, tendremos cobertura duplicada. Que criterio de escena prevalece (menor cloud cover, mas reciente, etc)? --> Esto es _en caso que_ sea un problema para el modelo ver el mismo terreno dos veces con distinta fecha en el mismo batch.
+7. **Deduplicacion**: si el area de interes cae en el overlap entre dos swaths consecutivos del satelite, tendremos cobertura duplicada. Que criterio de escena prevalece (menor cloud cover, mas reciente, etc)? --> Esto es _en caso que_ sea un problema para el modelo ver el mismo terreno dos veces con distinta fecha en el mismo batch.
 
 
 ### Otras preguntas
