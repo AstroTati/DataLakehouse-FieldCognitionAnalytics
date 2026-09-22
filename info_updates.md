@@ -25,6 +25,24 @@
 
 ___
 ## Updates/notas
+### Sep 22, 2026
+* Achique el area a 0.2 x 0.2 sobre una zona de San Juan, como charlamos la reunion anterior. 
+* Ahora que la notebook funciona, estuve armando una orquestracion y luego un Jobs en Databricks para automatizar. La estructura seria:
+```
+├── src/
+│   ├── cdse_client.py       # get_cdse_access_token, resolve_odata_product_id
+│   ├── ingestion.py         # download_safe_zip, verify_download, cleanup
+│   ├── metadata.py          # build_enriched_metadata, extract_mgrs_tile
+│   └── control_table.py     # get_already_ingested, flush_log_records
+├── tests/
+│   ├── test_metadata.py     # extract_mgrs_tile, checksum extraction (no Spark)
+│   └── test_ingestion.py    # request mocks for verify_download
+├── notebooks/
+│   └── Main_notebook-fca_copernicus.ipynb   # orquestration: improts src/, defines params, runs main()
+├── conf/
+│   └── ingestion_config.yaml  # BBOX, paths
+```
+
 ### Sep 7, 2026
 * Pude hacer andar las verificaciones y tests, la tabla de control anda bien tambien por fin!
 * Problema: cada que corro el script descarga los datos de nuevo. No filtra bien por status = 'success' o hay alguna otra diferencia (timestamp, etc) que domina y me estoy perdiendo?
