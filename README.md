@@ -36,31 +36,32 @@ DataLakehouse-FieldCognitionAnalytics/
 │   ├── high_level_architecture_v1.png  # Image file showing the project's architecture.
 │   ├── data_catalog.md 🚧              # Catalog of datasets, including field descriptions and metadata.
 │   ├── data_model.png 🚧               # Image file for data model.
-│   ├── naming_conventions.md 🚧        # Consistent naming guidelines for tables, columns, and files.
+│   └── naming_conventions.md 🚧        # Consistent naming guidelines for tables, columns, and files.
 │
-├── conf/
-│   └── ingestion_config.yaml           # AOIs, CDSE endpoints, retry policy, ingestion parameters.
+├── scripts/
+│   ├── conf/
+│      ├── ingestion_config.yaml           # AOIs, CDSE endpoints, retry policy, ingestion parameters.
 │
-├── notebooks/
-│   ├── discover_stac_scenes.ipynb      # Indexes STAC metadata for the active AOI.
-│   └── orchestration_bronze.ipynb      # Orchestrates download of pending scenes.
+│   ├── notebooks/
+│      ├── discover_stac_scenes.ipynb      # Indexes STAC metadata for the active AOI.
+│      └── orchestration_bronze.ipynb      # Orchestrates download of pending scenes.
 │
-├── src/                                # PySpark/Python modules for ETL and transformations.
-│   ├── cdse_client.py                  # CDSE OAuth2 authentication and OData product resolution.
-│   ├── control_table.py                # Ingestion control table (idempotency, batched logging).
-│   ├── exceptions.py                   # PermanentIngestionError / TransientIngestionError.
-│   ├── ingestion.py                    # Download orchestration, checksum verification, retry logic.
-│   ├── metadata.py                     # Enriched per-scene metadata.json construction.
-│   ├── stac_discovery.py               # STAC query and indexed-table writes.
-│   ├── tile_utils.py                   # MGRS tile_id extraction from product name.
-│   ├── silver/ 🚧                      # Reprojection, reflectance calc, masking, tiling.
-│   ├── gold/ 🚧                        # UNet-ready tile schema.
+│   └── src/                                 # PySpark/Python modules for ETL and transformations.
+│      ├── cdse_client.py                  # CDSE OAuth2 authentication and OData product resolution.
+│      ├── control_table.py                # Ingestion control table (idempotency, batched logging).
+│      ├── exceptions.py                   # PermanentIngestionError / TransientIngestionError.
+│      ├── ingestion.py                    # Download orchestration, checksum verification, retry logic.
+│      ├── metadata.py                     # Enriched per-scene metadata.json construction.
+│      ├── stac_discovery.py               # STAC query and indexed-table writes.
+│      ├── tile_utils.py                   # MGRS tile_id extraction from product name.
+│      ├── silver/ 🚧                      # Reprojection, reflectance calc, masking, tiling.
+│      └── gold/ 🚧                        # UNet-ready tile schema.
 │
-├── requirements.txt                    # Python dependencies (pystac-client, shapely, rasterio, etc.)
 ├── .gitignore                          # Files and directories to be ignored by Git.
 ├── LICENSE                             # License information for the repository.
 ├── README.md                           # Project overview and instructions.
 ├── info-updates.md                     # Working log for progress notes and meeting prep, not user-facing.
+└── requirements.txt                    # Python dependencies (pystac-client, shapely, rasterio, etc.)
 ```
  
 ### 🔧 Setup
