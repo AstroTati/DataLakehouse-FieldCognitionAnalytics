@@ -1,0 +1,42 @@
+# Bronze layer ingestion parameters
+
+# Unity Catalog: paths 
+unity_catalog:
+  catalog: fca_copernicus
+  bronze_schema: bronze
+  control_schema: control
+  volume_name: sentinel2_raw
+  # Delta table with the indexed STAC catalog (source of scenes to download!)
+  stac_source_table: fca_copernicus.bronze.sentinel2_stac_raw
+
+# CDSE: API endpoints
+cdse:
+  token_url: "https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token"
+  odata_base: "https://catalogue.dataspace.copernicus.eu/odata/v1"
+  stac_catalog_url: "https://stac.dataspace.copernicus.eu/v1"
+  secret_scope: cdse
+
+# Retry policy
+retry_policy:
+  max_retries: 3
+  backoff_base_seconds: 5  # 5s, 10s, 20s...
+
+# Filters/thresholds
+ingestion:
+  max_cloud_cover_pct: 90.0 
+  log_flush_every: 5  # control table flush scene count
+
+# Discovery STAC (for the exploration/check phase, not ingestion)
+stac_discovery:
+  collection: sentinel-2-l2a
+  active_aoi: sanjuan_v1   
+
+  aois:
+    sanjuan_v1:
+      bbox: [-67.998333, -31.803333, -67.965, -31.771944]
+      start_date: "2024-01-01"
+      end_date: "2024-12-31"
+    tucuman_v1:
+      bbox: [-66.0, -27.5, -65.0, -26.5]
+      start_date: "2024-06-01"
+      end_date: "2024-06-05"
