@@ -1,5 +1,21 @@
-
 ## Planning capa Silver
+### Flujo propuesto
+0. orchestration_bronze: ingestion_log + .SAFE.zip en el Volume
+1. orchestration_silver (notebook): config → run_silver()
+2. run_silver.py: selecciona escenas pendientes, procesa en paralelo, loguea por escena
+3. process_scene.py ← safe_reader.py + transforms.py
+4. Volume Silver: {producto}_refl.tif + {producto}_scl.tif → tabla silver.scene_qa
+
+Que contiene cada notebook/script:
+* **notebook de orquestracion**: Instala rasterio y tqdm, y reinicia Python; resuelve la raíz del repo y carga ingestion_config.yaml; arma el nombre de la tabla de control de la capa Bronze; llama a run_silver (spark, config, control_table), corre una query de control (estados y valid_fraction por AOI).
+* **run_silver.py**:	Calcula el config_hash (y crea schema y Volume si faltan); seleccion de pendientes: las escenas *success* de Bronze para el AOI activo, menos las *success* de Silver con el mismo AOI y hash; procesa en hilos y escribe el log cada N escenas.
+* **process_scene** (por escena): Ubica las bandas configuradas y SCL en el zip, elige la resolución nativa de cada una y extrae solo esos archivos y la metadata a disco local. Parsea la metadata. Valida que todas las bandas compartan CRS, origen de grilla y tamaño de píxel. Convierte el bbox del AOI al CRS de la escena. Aplica DN → reflectancia con el offset de la metadata, NaN en NODATA/SATURATED, y resamplea a la resolucion objetivo. SCL se replica sin interpolar. Calcula QA, aplica la máscara SCL si está activada, escribe GeoTIFF local y lo copia al Volume.
+* **safe_reader.py**:	Busca bandas y metadata dentro del zip, extrae solo lo necesario a disco local y parsea MTD_MSIL2A.xml (factor de cuantificación, offsets por banda, valores especiales, baseline, algo mas?).
+* **transforms.py**:	DN → reflectancia, elección y ajuste de resolución, ventana del AOI sobre la grilla del tile, metricas de QA y config_hash.
+* **exceptions.py**:	PermanentSceneError para fallas deterministicas.
+* **silver_table.py**:	Schema de scene_qa, creación de objetos, anti-join de idempotencia y escritura (por lote? por escena?).
+* **silver.scene_qa**: una fila por intento, con estado, ventana, resolucion, offsets usados, baseline, fracciones de pixeles invalidos/validos y medias por banda.
+
 ### Transformaciones
 
 1. **Reproyeccion**: si el area de estudio cae en el limite entre dos zonas UTM, vamos a tener tiles vecinos con sistemas de coordenadas de referencia (CRS) distintos (EPSG:32720 vs EPSG:32721, por ejemplo). Por las dudas, reproyectamos todo a un CRS comun antes de tilear.
