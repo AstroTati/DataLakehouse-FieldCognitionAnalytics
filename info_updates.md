@@ -3,12 +3,15 @@ Resumen reunion 29/10/2026 y notas para reunion 13/11/2026.
 * El tiling no va en Silver: el trabajo pesado (decodificación, reflectancia, masking) no depende del tamaño de los mosaicos --> cambiar en el readme.
 * Usar resolution de 10 m. (pasar de una resolución más fina a una más gruesa posteriormente es más económico; la información que se pierde al reducir la resolución al principio no se puede recuperar).
 * Nota: Spark no realiza ningún trabajo real acá (vale la pena si el tamaño de los datos aumenta considerablemente, i.e., si el AOI alcanza 100s de km²).
-* Con el AOI actual (0.2×0.2, es decir, 330×310 píxeles) por mosaico, 256×256 píxeles por fecha es prácticamente todo lo que la red UNet obtiene de este AOI. Realizaremos un promedio temporal, por lo que puede que esto no sea un problema, pero hay que tenerlo en cuenta.
+* Con el AOI actual (0.2°×0.2°, es decir, 330×310 píxeles) por mosaico, 256×256 píxeles por fecha es prácticamente todo lo que la red UNet obtiene de este AOI. Realizaremos un promedio temporal, por lo que puede que esto no sea un problema, pero hay que tenerlo en cuenta.
 * SCL masking: la máscara de nubes de Sen2Cor puede dar resultados erróneos en suelos áridos y salinas muy luminosas, y en nieve de altitud (este estudio de 2025 indica que sigue siendo bastante fiable https://isprs-annals.copernicus.org/articles/X-4-W8-2025/427/2026/isprs-annals-X-4-W8-2025-427-2026.pdf y pueden consultar en Sentiwiki cómo se lleva a cabo el procesamiento; creo que sigue siendo muy fiable, pero quizá les interese encontrar una forma de testearlo).
 * Siguiendo con SCL: decidi considerar como no válidas las sombras topográficas (2), las no clasificadas (7) y la nieve (11). En los Andes puede que la clase 2 represente una gran parte de los píxeles; quizá quieran comprobar cómo se ven algunas de estas escenas y decirme si no están de acuerdo conmigo. Silver mantiene la reflectancia sin enmascarar por defecto (mask_scl_in_raster: false), asi que esta decisión es reversible.
 * AOI cerca del borde de una escena: si la ventana de la AOI se extiende más allá de los límites de una escena, la escena falla con el error _failed_permanent_ en lugar de rellenarse. Creo que esto es un punto débil por el momento, pero es mi mente de astrónoma hablando. --> Están de acuerdo conmigo?
 * Pendiente: agregar reproyección (se los comente pero es parte de la capa Silver y todavia no lo implemente). Este paso es por si en el futuro tenemos un AOI que abarque 2+ mosaicos o zonas UTM (tal y como está, el código daría un error en vez de reproyectar).
-
+* Pendiente: tengo menos bandas de las que deberia tener? Tengo solo ['B04_10m', 'B08_10m', 'B11_20m', 'B12_20m'] (lista de solo las opciones con resolucion mas alta) ademas de SCL, pero segun Google deberian ser:
+   * Res 10 m: B02 (blue), B03 (green), B04 (red)
+   * Res 20 m: B05 (veg), B06 (veg), B07 (veg), B08 (NIR), B11 (SWIR1), B12 (SWIR2)
+   * Res 60 m: B01 (coastal aerosol), B09 (WV)
 
 ### Flujo propuesto
 0. orchestration_bronze: ingestion_log + .SAFE.zip en el Volume
@@ -53,7 +56,7 @@ Que contiene cada notebook/script:
 ___
 ## Updates/notas
 ### Sep 22, 2026
-* Achique el area a 0.2 x 0.2 sobre una zona de San Juan, como charlamos la reunion anterior. 
+* Achique el area a 0.2° x 0.2° sobre una zona de San Juan, como charlamos la reunion anterior. 
 * Ahora que la notebook funciona, estuve armando una orquestracion y luego un Jobs en Databricks para automatizar. La estructura seria:
 ```
 ├── src/
